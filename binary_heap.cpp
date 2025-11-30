@@ -33,6 +33,7 @@ print()
     for(auto pox : heap){
       std::cout << pox << " ";
     }
+    std::cout << '\n';
 }
 
 void
@@ -42,9 +43,13 @@ upheap(int element)
     int root = parent(element);
     int leaf = element;
     while(heap[leaf - 1] > heap[root - 1]){
-    std::iter_swap(heap.begin() + (leaf - 1), heap.begin() + (root - 1));
-    element = root;
-    root = parent(element);
+    //std::cout << "root: " << root;
+    //std::cout << '\n';
+    //std::cout << "leaf: " << leaf;
+    //std::cout << '\n';
+    //std::iter_swap(heap.begin() + (leaf - 1), heap.begin() + (root - 1));
+    leaf = root;
+    root = parent(leaf);
     }
 
   }
@@ -80,6 +85,7 @@ construct(const std::vector<T>& vector)
 
    for(int i = 0; i < vector.size() - 1; ++i){
       my_insert(vector.at(i));
+      print();
     } 
 
 }
