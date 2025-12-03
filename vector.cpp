@@ -12,7 +12,7 @@ public:
 
   size_t capacity;
 
-  myVector() : data(nullptr), size(0), capacity(0);
+  myVector() : data(nullptr), size(0), capacity(0){};
 
   size_t get_capacity() const {
     return capacity;
@@ -26,7 +26,12 @@ public:
 private:
 
   Element* data;
-}
+};
+
+
 int main(){
+  std::vector<int> vec;
+  std::cout << "capacity: " << vec.capacity();
+  std::cout << "size: " << vec.size();
   return 0;
 }

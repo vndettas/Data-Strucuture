@@ -26,16 +26,6 @@ my_insert(T element)
 
 }
 
-void 
-print()
-{
-
-    for(auto pox : heap){
-      std::cout << pox << " ";
-    }
-    std::cout << '\n';
-}
-
 void
 upheap(int element)
 {
@@ -43,11 +33,7 @@ upheap(int element)
     int root = parent(element);
     int leaf = element;
     while(heap[leaf - 1] > heap[root - 1]){
-    //std::cout << "root: " << root;
-    //std::cout << '\n';
-    //std::cout << "leaf: " << leaf;
-    //std::cout << '\n';
-    //std::iter_swap(heap.begin() + (leaf - 1), heap.begin() + (root - 1));
+    std::iter_swap(heap.begin() + (leaf - 1), heap.begin() + (root - 1));
     leaf = root;
     root = parent(leaf);
     }
@@ -68,7 +54,79 @@ find_Max()
     return heap.at(0);
 
 }
+void
+print_with_branches() {
+      if (heap.empty()) {
+        std::cout << "<empty heap>\n";
+        return;
+    }
 
+    int n = (int)heap.size();
+    int height = (int)std::floor(std::log2(n)) + 1;
+
+    int maxWidth = 0;
+    for (int v : heap) {
+        maxWidth = std::max(maxWidth, (int)std::to_string(v).size());
+    }
+    int nodeCell = maxWidth + 2;                  // «ячейка» одного узла
+    int totalWidth = (1 << height) * nodeCell;    // ширина всей строки
+
+    int startIdx = 0;
+
+    for (int level = 0; level < height && startIdx < n; ++level) {
+        int levelCount = 1 << level;
+        int remaining  = n - startIdx;
+        if (levelCount > remaining) levelCount = remaining;
+
+        int step = totalWidth / (1 << level); // ширина блока на один узел этого уровня
+
+        std::string nodesLine(totalWidth, ' ');
+        std::string branchLine(totalWidth, ' ');
+
+        bool hasChildren = false;
+
+        for (int j = 0; j < levelCount; ++j) {
+            int idx = startIdx + j;
+            int center = step / 2 + j * step; // центр «ячейки» узла
+
+            std::string s = std::to_string(heap[idx]);
+            int len = (int)s.size();
+            int leftPos = center - len / 2;
+
+            // записываем число
+            for (int k = 0; k < len && leftPos + k < totalWidth; ++k) {
+                if (leftPos + k >= 0)
+                    nodesLine[leftPos + k] = s[k];
+            }
+
+            int leftChild  = 2 * idx + 1;
+            int rightChild = 2 * idx + 2;
+
+            int branchOffset = step / 4;
+            if (branchOffset < 1) branchOffset = 1;
+
+            if (leftChild < n) {
+                int pos = center - branchOffset;
+                if (pos >= 0 && pos < totalWidth)
+                    branchLine[pos] = '/';
+                hasChildren = true;
+            }
+            if (rightChild < n) {
+                int pos = center + branchOffset;
+                if (pos >= 0 && pos < totalWidth)
+                    branchLine[pos] = '\\';
+                hasChildren = true;
+            }
+        }
+
+        std::cout << nodesLine << '\n';
+        if (hasChildren)
+            std::cout << branchLine << '\n';
+
+        startIdx += levelCount;
+    }
+  }
+  
 T
 extract_Max() 
 {
@@ -85,7 +143,6 @@ construct(const std::vector<T>& vector)
 
    for(int i = 0; i < vector.size() - 1; ++i){
       my_insert(vector.at(i));
-      print();
     } 
 
 }
@@ -126,7 +183,9 @@ int main(){
 
   BinaryHeap heap(vec);
 
-  heap.print();
+
+  heap.print_with_branches();
+
 
 
   return 0;
